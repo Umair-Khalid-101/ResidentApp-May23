@@ -491,7 +491,7 @@ export default function GenerateRequest() {
           </ScrollView>
         </SafeAreaView>
       )}
-      {isloading && <Loader title={"Sending Request"} />}
+      {isloading && <Loader title={"Loading..."} />}
     </>
   );
 }

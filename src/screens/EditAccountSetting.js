@@ -44,6 +44,27 @@ export default function EditAccountSetting() {
   const [statename, setstatename] = useState(null);
   const [propertyname, setpropertyname] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [properties, setProperties] = useState(null);
+
+  // GET PROPERTIES
+  const getProperties = async () => {
+    setIsLoading(true);
+    const q = query(collection(db, "general"));
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot?.empty) {
+      setIsLoading(false);
+      return;
+    }
+
+    querySnapshot?.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      // console.log("SignUp", doc.data()?.properties);c
+      setProperties(doc.data()?.properties);
+    });
+    setIsLoading(false);
+  };
 
   const data = [
     { value: "Independance Place" },
@@ -67,6 +88,7 @@ export default function EditAccountSetting() {
   };
   useEffect(() => {
     loadfonts();
+    getProperties();
   }, []);
 
   const { handleSubmit, control } = useForm({
@@ -234,7 +256,7 @@ export default function EditAccountSetting() {
             {loaded ? <Text style={styles.text3}>Property</Text> : ""}
             <SelectList
               setSelected={(val) => setpropertyname(val)}
-              data={data}
+              data={properties}
               boxStyles={styles.input}
               placeholder={
                 storedCredentials?.propertyname
@@ -273,7 +295,7 @@ export default function EditAccountSetting() {
           </ScrollView>
         </SafeAreaView>
       )}
-      {isLoading && <Loader title={"Saving Changes..."} />}
+      {isLoading && <Loader title={"Loading Data..."} />}
     </>
   );
 }
